@@ -18,14 +18,14 @@ class Xmysqli extends mysqli
     parent::__construct($dataDB['host'],$dataDB['user'],$dataDB['pass'],$dataDB['base']);
     if (mysqli_connect_error())
       {
-	$error_message = date("Y-m-d H:i:s").'\n###\nErreur de connexion (' . mysqli_connect_errno() . ') ' . mysqli_connect_error() . '\n###\n';
+	$error_message = "mysqli::connect(): Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error() . ";
 	if ($config['core']['debug'])
 	  $debug['db']['connect'] = $error_message;
 	else
 	  $err->set($error_message);
       }
     if(!$this->set_charset("utf8"))
-      $err->set('mysqli::set_charset(): erreur lors du chargement du jeu de caracteres utf8');
+      $err->set('mysqli::set_charset(): Error while loading utf8 charset');
   }
 
   public function query($q)
@@ -66,7 +66,7 @@ class Xmysqli extends mysqli
 	else
 	  saveAccessLog("ERR", "Echec ouverture fichier " .$name);
 	//die($errtxt);
-	$err->set('Une erreure c\'est produite merci d\'envoyer le code suivant &agrave; moodle@supinternet.fr #'.$iid);
+	$err->set("An error occured please send this code to  <a href='mailto:".$config['core']['contact']."'>".$config['core']['contact']."</a>#".$iid);
       }
     return ($res);
   }
@@ -85,21 +85,7 @@ class Xmysqli extends mysqli
 
     while($row = $res->fetch_array(MYSQLI_ASSOC))
       {
-	$all[] = $row;
-      }
-    return $all;
-  }
-  public function fetch_alla($query)
-  {
-    $res = $this->query($query);
-    $all = array();
-
-    if (!is_object($res))
-      die('Query ERROR:');
-
-    while($row = $res->fetch_array(MYSQLI_BOTH))
-      {
-	$all[] = $row;
+      	$all[] = $row;
       }
     return $all;
   }

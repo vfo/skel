@@ -2,13 +2,13 @@
 
 abstract class Model
 {
-  protected $link; // refernece du link de la connexion mysqli a utiliser
-  public $insert_id; // id du dernier instert via le link mysqli
-  protected $affected_rows; // nombre de lignes affectees par la derniere requete via le link mysqli
-  protected $fields; // arrays des champs de la table
-  protected $primaryKey; // nom du champ de la cle primaire 
-  protected $tableName; // nom de la table
-  protected $listfields; // array permettant de setter la liste des champs manuellement dans une classe fille
+  protected $link; // (resource) link for mysqli connection
+  public $insert_id; //  
+  protected $affected_rows; // 
+  protected $fields; // (array) list of table fields
+  protected $primaryKey; // (string) PK name 
+  protected $tableName; // (string) Table name
+  protected $listfields; // (array)  list of table fields setted by child class
 
   public function __construct()
   {
@@ -140,7 +140,7 @@ abstract class Model
 
   public function delete($opt = array())
   { 
-	if (empty($opt)) // delete base sur l'instance courante
+	if (empty($opt)) 
 	{
 		$q = "DELETE FROM `".$this->tableName."`";
 		$count = 0;
@@ -158,19 +158,17 @@ abstract class Model
 				$q .= "`".$this->tableName."`.`".$name."` = '".$value."'";
 				$count++;
 			}
-		}// WHERE `".$this->primaryKey."` = ".intval($this->{$this->primaryKey});
+		}
 		
 	}
-	else // delete base sur les opts passess en parametres
+	else 
 		$q = "DELETE FROM `".$this->tableName."`" . $this->format_opt($opt);
 	$this->link->query($q);
 	$this->affected_rows = $this->link->affected_rows;
 }
 
-public function save($opt = array())
+public function save()
 {
-	if (empty($opt)) // save base sur l'instance courante
-	{
 		$count = 0;
 		$nb_fields = count($this->fields);
 		if($this->{$this->primaryKey} != null)
@@ -202,7 +200,7 @@ public function save($opt = array())
 $count++;
 }
 
-		//remise du compteur a 0
+
 $count = 0;
 
 $q .= " VALUES (";
@@ -218,7 +216,7 @@ $count++;
 $this->link->query($q);
 $this->insert_id = $this->link->insert_id; 
 }
-}
+
 
 }
 public function format_select($opt)
@@ -249,7 +247,7 @@ return $out;
 }
 public function getAll($opt = array(), $first_only = FALSE)
 {
-	if (empty($opt)) // getAll base sur l'instance courante
+	if (empty($opt)) 
 	{
 		$q = "SELECT `".$this->tableName."`.`id` FROM `".$this->tableName."`";
 		$count = 0;
@@ -271,14 +269,12 @@ public function getAll($opt = array(), $first_only = FALSE)
 		if ($first_only === TRUE)
 			$q .= " LIMIT 1";
 	}
-	else // getAll base sur les opts passees en parametres
+	else 
 	if (!empty($opt['select']))
 		$q = "SELECT ".$this->format_select($opt['select'])." FROM `".$this->tableName."`" . $this->format_opt($opt);
 	else
 		$q = "SELECT `".$this->tableName."`.`id` FROM `".$this->tableName."`" . $this->format_opt($opt);
-	//pour printer les requetes sans quitter
-	//     my_dump($q, FALSE);
-	//    my_dump($q, false);
+
 	$ids = $this->link->fetch_all($q);
 	$objs = array();
 	if (!empty($opt['select']))
