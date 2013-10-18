@@ -64,7 +64,7 @@ class Xmysqli extends mysqli
 	  fclose($fd);
 	  }
 	else
-	  saveAccessLog("ERR", "Echec ouverture fichier " .$name);
+	  $err->set("Failed to open file " .$name, 'low');
 	//die($errtxt);
 	$err->set("An error occured please send this code to  <a href='mailto:".$config['core']['contact']."'>".$config['core']['contact']."</a>#".$iid);
       }
